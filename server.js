@@ -1,14 +1,23 @@
 const express = require("express");
+const path = require("path");
+
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000; // Use Azure's assigned port
 
 // Middleware to parse JSON requests
 app.use(express.json());
-app.use(express.static("public"));
+
+// Serve static files from the "public" folder
+app.use(express.static(path.join(__dirname, "public")));
+
+// Serve index.html when accessing root
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 // Risk Calculation API
 app.post("/calculate-risk", (req, res) => {
-  const { age, height, weight, systolic, diastolic, diseases } = req.body;
+  const { age, height, weight, systolic, diastolic, diseases = [] } = req.body; // Ensure `diseases` is an array
 
   // Validate inputs
   if (!age || !height || !weight || !systolic || !diastolic) {
@@ -75,7 +84,12 @@ app.post("/calculate-risk", (req, res) => {
   });
 });
 
+// Handle 404 errors (optional)
+app.use((req, res) => {
+  res.status(404).send("404 - Not Found");
+});
+
 // Start Server
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
