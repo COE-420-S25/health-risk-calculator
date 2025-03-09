@@ -39,7 +39,7 @@ app.post("/calculate-risk", (req, res) => {
     bmiPoints = 75; // Obese
   }
 
-  // Age Points
+  // Age Point
   let agePoints = age < 30 ? 0 : age < 45 ? 10 : age < 60 ? 20 : 30;
 
   // Blood Pressure Points
